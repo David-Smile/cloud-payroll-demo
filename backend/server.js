@@ -10,6 +10,11 @@ const connectDB = require("./config/db");
 const cors = require("cors");
 require("dotenv").config();
 
+
+const authRoutes = require("./routes/authRoutes");
+const employeeRoutes = require("./routes/employeeRoutes");
+const payrollRoutes = require("./routes/payrollRoutes");
+
 // Initialize Express application
 const app = express();
 
@@ -19,6 +24,10 @@ connectDB();
 // Middleware Configuration
 app.use(cors());        // Enable Cross-Origin Resource Sharing
 app.use(express.json()); // Parse JSON request bodies
+
+app.use("/api/auth", authRoutes);
+app.use("/api/employees", employeeRoutes);
+app.use("/api/payroll", payrollRoutes);
 
 // Basic Route - API Health Check
 app.get("/", (req, res) => {
