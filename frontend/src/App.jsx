@@ -7,6 +7,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import DashboardPage from "./pages/DashboardPage";
+import EmployeePage from "./pages/EmployeePage";
 import { AuthProvider, AuthContext } from "./context/AuthContext";
 import { useContext } from "react";
 
@@ -48,6 +49,16 @@ function App() {
             element={
               <PrivateRoute>
                 <DashboardPage />
+              </PrivateRoute>
+            }
+          />
+
+          {/* Protected route - Employee Management */}
+          <Route
+            path="/employees"
+            element={
+              <PrivateRoute>
+                <EmployeePage />
               </PrivateRoute>
             }
           />
