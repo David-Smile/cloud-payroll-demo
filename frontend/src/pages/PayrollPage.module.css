@@ -1,0 +1,163 @@
+.payrollPage {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.title {
+  color: #2d3748;
+  font-size: 2rem;
+  margin-bottom: 2rem;
+}
+
+.createSection {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+.createSection h2 {
+  color: #2d3748;
+  font-size: 1.25rem;
+  margin: 0 0 1rem 0;
+}
+
+.createForm {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.monthInput {
+  padding: 0.75rem 1rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.monthInput:focus {
+  border-color: #6a82fb;
+  box-shadow: 0 0 0 3px rgba(106, 130, 251, 0.1);
+}
+
+.createButton {
+  padding: 0.75rem 1.5rem;
+  background: #6a82fb;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.createButton:hover:not(:disabled) {
+  background: #5a6fe0;
+  transform: translateY(-1px);
+}
+
+.createButton:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.historySection {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.historySection h2 {
+  color: #2d3748;
+  font-size: 1.25rem;
+  margin: 0 0 1rem 0;
+}
+
+.payrollTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.payrollTable th,
+.payrollTable td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.payrollTable th {
+  background: #f7fafc;
+  font-weight: 600;
+  color: #4a5568;
+}
+
+.payrollTable tr:hover {
+  background: #f7fafc;
+}
+
+.status {
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.pending {
+  background: #fff7ed;
+  color: #c05621;
+}
+
+.completed {
+  background: #f0fff4;
+  color: #2f855a;
+}
+
+.failed {
+  background: #fff5f5;
+  color: #c53030;
+}
+
+.downloadButton {
+  padding: 0.5rem 1rem;
+  background: #6a82fb;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.downloadButton:hover {
+  background: #5a6fe0;
+}
+
+.error {
+  background: #fff5f5;
+  color: #c53030;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 768px) {
+  .createForm {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .payrollTable {
+    display: block;
+    overflow-x: auto;
+  }
+
+  .payrollTable th,
+  .payrollTable td {
+    white-space: nowrap;
+  }
+} 

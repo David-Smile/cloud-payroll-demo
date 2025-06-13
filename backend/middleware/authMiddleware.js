@@ -1,44 +1,41 @@
-/**
- * Authentication Middleware
- * This middleware protects routes by verifying JWT tokens
- * Ensures that only authenticated users can access protected routes
- */
-
-const jwt = require("jsonwebtoken");
+const jwt = require('jsonwebtoken');
+const User = require('../models/User');
 
 /**
- * Route Protection Middleware
+ * Middleware to protect routes by verifying JWT token
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  * @param {Function} next - Express next middleware function
- * 
- * Verifies JWT token from Authorization header
- * Attaches decoded admin information to request object
  */
-const protect = (req, res, next) => {
-  // Get token from Authorization header
-  let token = req.headers.authorization;
+const protect = async (req, res, next) => {
+  let token;
 
-  // Check if token exists
-  if (!token) return res.status(401).json({ message: "No token, access denied" });
+  // Check for token in Authorization header
+  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+    try {
+      // Get token from header
+      token = req.headers.authorization.split(' ')[1];
 
-  try {
-    // Remove 'Bearer ' prefix from token
-    token = token.split(" ")[1]; // "Bearer token"
-    
-    // Verify token using JWT_SECRET
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    
-    // Attach decoded admin information to request object
-    req.admin = decoded;
-    
-    // Proceed to next middleware/route handler
-    next();
-  } catch (err) {
-    // Handle invalid token
-    res.status(401).json({ message: "Invalid token" });
+      // Verify token
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+      // Get user from the token
+      req.user = await User.findById(decoded.id).select('-password');
+
+      if (!req.user) {
+        return res.status(401).json({ message: 'Not authorized, user not found' });
+      }
+
+      next();
+    } catch (error) {
+      console.error('Auth middleware error:', error);
+      res.status(401).json({ message: 'Not authorized, token failed' });
+    }
+  }
+
+  if (!token) {
+    res.status(401).json({ message: 'Not authorized, no token' });
   }
 };
 
-// Export the protection middleware
-module.exports = protect;
+module.exports = protect; 

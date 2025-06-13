@@ -13,8 +13,21 @@ const Employee = require("../models/Employee");
  * @returns {Object} Created employee data
  */
 exports.addEmployee = async (req, res) => {
-  const employee = await Employee.create(req.body);
-  res.status(201).json(employee);
+  try {
+    // Add the user who created the employee
+    req.body.createdBy = req.user.id;
+    
+    const employee = await Employee.create(req.body);
+    return employee;
+  } catch (err) {
+    if (err.name === 'ValidationError') {
+      throw new Error(Object.values(err.errors).map(val => val.message).join(', '));
+    }
+    if (err.code === 11000) {
+      throw new Error('Email already exists');
+    }
+    throw err;
+  }
 };
 
 /**
@@ -24,8 +37,14 @@ exports.addEmployee = async (req, res) => {
  * @returns {Array} List of all employees
  */
 exports.getEmployees = async (req, res) => {
-  const employees = await Employee.find();
-  res.json(employees);
+  try {
+    const employees = await Employee.find()
+      .sort({ createdAt: -1 })
+      .populate('createdBy', 'name email');
+    return employees;
+  } catch (err) {
+    throw new Error('Error fetching employees');
+  }
 };
 
 /**
@@ -35,8 +54,16 @@ exports.getEmployees = async (req, res) => {
  * @returns {Object} Employee data
  */
 exports.getEmployee = async (req, res) => {
-  const employee = await Employee.findById(req.params.id);
-  res.json(employee);
+  try {
+    const employee = await Employee.findById(req.params.id)
+      .populate('createdBy', 'name email');
+    return employee;
+  } catch (err) {
+    if (err.name === 'CastError') {
+      throw new Error('Invalid employee ID');
+    }
+    throw new Error('Error fetching employee');
+  }
 };
 
 /**
@@ -46,12 +73,26 @@ exports.getEmployee = async (req, res) => {
  * @returns {Object} Updated employee data
  */
 exports.updateEmployee = async (req, res) => {
-  const employee = await Employee.findByIdAndUpdate(
-    req.params.id, 
-    req.body, 
-    { new: true }  // Return the updated document
-  );
-  res.json(employee);
+  try {
+    const employee = await Employee.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { 
+        new: true,
+        runValidators: true
+      }
+    ).populate('createdBy', 'name email');
+    
+    return employee;
+  } catch (err) {
+    if (err.name === 'ValidationError') {
+      throw new Error(Object.values(err.errors).map(val => val.message).join(', '));
+    }
+    if (err.name === 'CastError') {
+      throw new Error('Invalid employee ID');
+    }
+    throw new Error('Error updating employee');
+  }
 };
 
 /**
@@ -61,6 +102,16 @@ exports.updateEmployee = async (req, res) => {
  * @returns {Object} Success message
  */
 exports.deleteEmployee = async (req, res) => {
-  await Employee.findByIdAndDelete(req.params.id);
-  res.json({ message: "Employee deleted" });
+  try {
+    const employee = await Employee.findByIdAndDelete(req.params.id);
+    if (!employee) {
+      throw new Error('Employee not found');
+    }
+    return true;
+  } catch (err) {
+    if (err.name === 'CastError') {
+      throw new Error('Invalid employee ID');
+    }
+    throw new Error('Error deleting employee');
+  }
 };

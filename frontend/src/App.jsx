@@ -4,26 +4,16 @@
  * Manages protected and public routes
  */
 
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import LoginPage from "./pages/LoginPage";
-import DashboardPage from "./pages/DashboardPage";
-import EmployeePage from "./pages/EmployeePage";
-import { AuthProvider, AuthContext } from "./context/AuthContext";
-import { useContext } from "react";
-
-/**
- * Private Route Component
- * Protects routes that require authentication
- * Redirects to login page if user is not authenticated
- * 
- * @param {Object} props - Component props
- * @param {React.ReactNode} props.children - Child components to be protected
- * @returns {JSX.Element} Protected route or redirect to login
- */
-function PrivateRoute({ children }) {
-  const { token } = useContext(AuthContext);
-  return token ? children : <Navigate to="/login" />;
-}
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
+import AdminLayout from './components/AdminLayout';
+import LoginPage from './components/LoginPage';
+import Dashboard from './pages/admin/Dashboard';
+import Employees from './pages/admin/Employees';
+import Payroll from './pages/admin/Payroll';
+import Reports from './pages/admin/Reports';
+import Profile from './pages/admin/Profile';
 
 /**
  * App Component
@@ -36,34 +26,21 @@ function PrivateRoute({ children }) {
  */
 function App() {
   return (
-    // Wrap entire app with authentication provider
     <AuthProvider>
-      <BrowserRouter>
+      <Router>
         <Routes>
-          {/* Public route - Login page */}
           <Route path="/login" element={<LoginPage />} />
-          
-          {/* Protected route - Dashboard */}
-          <Route
-            path="/"
-            element={
-              <PrivateRoute>
-                <DashboardPage />
-              </PrivateRoute>
-            }
-          />
-
-          {/* Protected route - Employee Management */}
-          <Route
-            path="/employees"
-            element={
-              <PrivateRoute>
-                <EmployeePage />
-              </PrivateRoute>
-            }
-          />
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route path="dashboard" element={<Dashboard />} />
+            <Route path="employees" element={<Employees />} />
+            <Route path="payroll" element={<Payroll />} />
+            <Route path="reports" element={<Reports />} />
+            <Route path="profile" element={<Profile />} />
+            <Route index element={<Navigate to="dashboard" replace />} />
+          </Route>
+          <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
-      </BrowserRouter>
+      </Router>
     </AuthProvider>
   );
 }
